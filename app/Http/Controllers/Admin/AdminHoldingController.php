@@ -66,6 +66,13 @@ class AdminHoldingController extends Controller
 
     public function destroy(Holding $holding)
     {
+        $temPedidos = $holding->orderItems()->exists();
+        if ($temPedidos) {
+            return redirect()
+                ->route('admin.holdings.index')
+                ->with('error', 'Imóvel vinculado a pedidos. Remova os pedidos/itens antes de excluir.');
+        }
+
         $holding->delete();
         return redirect()->route('admin.holdings.index')->with('success', 'Imóvel removido.');
     }
