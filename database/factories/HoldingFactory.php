@@ -15,6 +15,7 @@ class HoldingFactory extends Factory
             'address'     => $this->faker->streetAddress,
             'description' => Str::limit($this->faker->sentence(12), 50, ''),
             'owner'       => Str::limit($this->faker->name, 50, ''),
+            'price'       => $this->faker->randomFloat(2, 50000, 5000000),
             'regisdate'   => $this->faker->dateTimeBetween('-2 years', 'now'),
             'photo'       => $this->faker->lexify('img_????.jpg'), // <=30 chars
             'category_id' => Category::factory(),

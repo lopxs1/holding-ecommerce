@@ -18,10 +18,10 @@ class CheckoutController extends Controller
             return redirect()->route('holdings.index')->with('error', 'Seu carrinho está vazio!');
         }
 
-        // Garantir que só usamos holdings existentes
+        // Apenas holdings existentes
         $holdings = Holding::whereIn('id', array_keys($cartItems))->get()->keyBy('id');
 
-        // Prepara dados para a view; total permanece 0 porque holdings não têm preço no schema
+        // Dados para a view com preço
         $itemsForView = [];
         foreach ($cartItems as $id => $item) {
             if (!isset($holdings[$id])) {
@@ -35,10 +35,14 @@ class CheckoutController extends Controller
                 'address'    => $holding->address,
                 'owner'      => $holding->owner,
                 'photo'      => $holding->photo,
+                'price'      => $holding->price,
+                'quantity'   => $item['quantity'] ?? 1,
             ];
         }
 
-        $total = 0;
+        $total = collect($itemsForView)->sum(function ($item) {
+            return ($item['quantity'] ?? 1) * $item['price'];
+        });
 
         return view('checkout.index', ['cartItems' => $itemsForView, 'total' => $total]);
     }
@@ -53,18 +57,32 @@ class CheckoutController extends Controller
 
         $order = Order::create([
             'user_id' => Auth::id(),
-            'total'   => 0, // holdings não possuem preço; ajuste se adicionar coluna/preço
+            'total'   => 0,
             'status'  => 'pending',
         ]);
 
+        $total = 0;
+        $holdings = Holding::whereIn('id', array_keys($cartItems))->get()->keyBy('id');
+
         foreach ($cartItems as $holdingId => $item) {
+            if (!isset($holdings[$holdingId])) {
+                continue;
+            }
+
+            $holding = $holdings[$holdingId];
+            $quantity = max(1, (int)($item['quantity'] ?? 1));
+
             OrderItem::create([
                 'order_id'   => $order->id,
                 'holding_id' => $holdingId,
-                'price'      => 0, // sem preço no schema atual
+                'quantity'   => $quantity,
+                'unit_price' => $holding->price,
             ]);
+
+            $total += $holding->price * $quantity;
         }
 
+        $order->update(['total' => $total]);
         session()->forget('cart');
 
         return redirect()->route('orders.show', $order)->with('success', 'Pedido realizado com sucesso!');

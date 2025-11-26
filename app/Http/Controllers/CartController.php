@@ -25,6 +25,7 @@ class CartController extends Controller
                 'holding_id' => $holding->id,
                 'name'       => $holding->name,
                 'photo'      => $holding->photo,
+                'price'      => $holding->price,
                 'quantity'   => 1,
             ];
         }

@@ -5,6 +5,7 @@ use App\Http\Controllers\HoldingController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminHoldingController;
@@ -23,6 +24,9 @@ Auth::routes();
 
 // Holdings (listar e ver detalhes)
 Route::resource('holdings', HoldingController::class)->only(['index', 'show']);
+
+// Products (listar e ver detalhes)
+Route::resource('products', ProductController::class)->only(['index', 'show']);
 
 // Carrinho (usa holding_id)
 Route::prefix('cart')->group(function () {
@@ -51,4 +55,3 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
 });
-

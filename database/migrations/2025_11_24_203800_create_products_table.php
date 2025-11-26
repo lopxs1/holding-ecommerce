@@ -11,18 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('holdings', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 50);
-            $table->string('address', 50);
-            $table->string('description', 50);
-            $table->string('owner', 50);
-            $table->decimal('price', 12, 2);
-            $table->dateTime('regisdate');
-            $table->string('photo', 255);
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->decimal('price', 10, 2);
+            $table->string('image')->nullable();
+            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
         });
-        
     }
 
     /**
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('holdings');
+        Schema::dropIfExists('products');
     }
 };

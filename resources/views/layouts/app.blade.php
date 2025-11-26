@@ -52,6 +52,12 @@
                             <i class="fa-solid fa-house"></i> Imoveis
                         </a>
                     </li>
+                    {{-- Produtos --}}
+                    <li class="nav-item">
+                        <a class="nav-link text-light" href="{{ route('products.index') }}">
+                            <i class="fa-solid fa-box"></i> Produtos
+                        </a>
+                    </li>
 
                     {{-- Pedidos --}}
                     @auth
