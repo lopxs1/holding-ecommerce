@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Holding;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,26 +19,40 @@ class CheckoutController extends Controller
             return redirect()->route('holdings.index')->with('error', 'Seu carrinho está vazio!');
         }
 
-        // Apenas holdings existentes
-        $holdings = Holding::whereIn('id', array_keys($cartItems))->get()->keyBy('id');
+        $holdings = Holding::whereIn('id', $this->extractIdsByType($cartItems, 'holding'))->get()->keyBy('id');
+        $products = Product::whereIn('id', $this->extractIdsByType($cartItems, 'product'))->get()->keyBy('id');
 
-        // Dados para a view com preço
         $itemsForView = [];
-        foreach ($cartItems as $id => $item) {
-            if (!isset($holdings[$id])) {
-                continue;
+        foreach ($cartItems as $item) {
+            $quantity = $item['quantity'] ?? 1;
+
+            if (($item['type'] ?? null) === 'holding' && isset($holdings[$item['id']])) {
+                $holding = $holdings[$item['id']];
+                $itemsForView[] = [
+                    'key'      => $item['key'],
+                    'type'     => 'holding',
+                    'name'     => $holding->name,
+                    'address'  => $holding->address,
+                    'owner'    => $holding->owner,
+                    'photo'    => $holding->photo,
+                    'price'    => $holding->price,
+                    'quantity' => $quantity,
+                    'subtotal' => $holding->price * $quantity,
+                ];
             }
 
-            $holding = $holdings[$id];
-            $itemsForView[] = [
-                'holding_id' => $holding->id,
-                'name'       => $holding->name,
-                'address'    => $holding->address,
-                'owner'      => $holding->owner,
-                'photo'      => $holding->photo,
-                'price'      => $holding->price,
-                'quantity'   => $item['quantity'] ?? 1,
-            ];
+            if (($item['type'] ?? null) === 'product' && isset($products[$item['id']])) {
+                $product = $products[$item['id']];
+                $itemsForView[] = [
+                    'key'      => $item['key'],
+                    'type'     => 'product',
+                    'name'     => $product->name,
+                    'photo'    => $product->image,
+                    'price'    => $product->price,
+                    'quantity' => $quantity,
+                    'subtotal' => $product->price * $quantity,
+                ];
+            }
         }
 
         $total = collect($itemsForView)->sum(function ($item) {
@@ -62,29 +77,50 @@ class CheckoutController extends Controller
         ]);
 
         $total = 0;
-        $holdings = Holding::whereIn('id', array_keys($cartItems))->get()->keyBy('id');
+        $holdings = Holding::whereIn('id', $this->extractIdsByType($cartItems, 'holding'))->get()->keyBy('id');
+        $products = Product::whereIn('id', $this->extractIdsByType($cartItems, 'product'))->get()->keyBy('id');
 
-        foreach ($cartItems as $holdingId => $item) {
-            if (!isset($holdings[$holdingId])) {
-                continue;
-            }
-
-            $holding = $holdings[$holdingId];
+        foreach ($cartItems as $item) {
             $quantity = max(1, (int)($item['quantity'] ?? 1));
 
-            OrderItem::create([
-                'order_id'   => $order->id,
-                'holding_id' => $holdingId,
-                'quantity'   => $quantity,
-                'unit_price' => $holding->price,
-            ]);
+            if (($item['type'] ?? null) === 'holding' && isset($holdings[$item['id']])) {
+                $holding = $holdings[$item['id']];
 
-            $total += $holding->price * $quantity;
+                OrderItem::create([
+                    'order_id'   => $order->id,
+                    'holding_id' => $holding->id,
+                    'quantity'   => $quantity,
+                    'unit_price' => $holding->price,
+                ]);
+
+                $total += $holding->price * $quantity;
+            }
+
+            if (($item['type'] ?? null) === 'product' && isset($products[$item['id']])) {
+                $product = $products[$item['id']];
+
+                OrderItem::create([
+                    'order_id'   => $order->id,
+                    'product_id' => $product->id,
+                    'quantity'   => $quantity,
+                    'unit_price' => $product->price,
+                ]);
+
+                $total += $product->price * $quantity;
+            }
         }
 
         $order->update(['total' => $total]);
         session()->forget('cart');
 
         return redirect()->route('orders.show', $order)->with('success', 'Pedido realizado com sucesso!');
+    }
+
+    private function extractIdsByType(array $cartItems, string $type): array
+    {
+        return collect($cartItems)
+            ->filter(fn ($item) => ($item['type'] ?? null) === $type)
+            ->pluck('id')
+            ->all();
     }
 }

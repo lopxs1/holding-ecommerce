@@ -15,7 +15,7 @@ class AdminOrderController extends Controller
 
     public function show(Order $order)
     {
-        $order->load(['user', 'items.holding']);
+        $order->load(['user', 'items.holding', 'items.product']);
         return view('admin.orders.show', compact('order'));
     }
 }

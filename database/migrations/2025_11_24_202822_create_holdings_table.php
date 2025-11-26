@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('holdings', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 50);
-            $table->string('address', 50);
-            $table->string('description', 50);
-            $table->string('owner', 50);
+            $table->string('name', 100);
+            $table->string('address', 150);
+            $table->string('description', 255);
+            $table->string('owner', 80);
             $table->decimal('price', 12, 2);
             $table->dateTime('regisdate');
-            $table->string('photo', 255);
+            $table->string('photo', 255)->nullable();
             $table->timestamps();
         });
         

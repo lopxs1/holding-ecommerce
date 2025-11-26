@@ -32,8 +32,9 @@ Route::resource('products', ProductController::class)->only(['index', 'show']);
 Route::prefix('cart')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('cart.index');
     Route::post('/add/{holding}', [CartController::class, 'add'])->name('cart.add');
-    Route::post('/update/{holdingId}', [CartController::class, 'update'])->name('cart.update');
-    Route::post('/remove/{holdingId}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/add-product/{product}', [CartController::class, 'addProduct'])->name('cart.addProduct');
+    Route::post('/update/{key}', [CartController::class, 'update'])->name('cart.update');
+    Route::post('/remove/{key}', [CartController::class, 'remove'])->name('cart.remove');
 });
 
 // Checkout e pedidos (somente autenticado)
@@ -52,6 +53,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('holdings', AdminHoldingController::class); // CRUD completo
+    Route::resource('products', \App\Http\Controllers\Admin\AdminProductController::class);
     Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
 });

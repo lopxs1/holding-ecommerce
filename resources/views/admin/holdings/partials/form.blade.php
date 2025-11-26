@@ -29,8 +29,14 @@
         </select>
     </div>
     <div class="col-md-6">
-        <label class="form-label">Foto (URL ou caminho)</label>
-        <input type="text" name="photo" class="form-control" value="{{ old('photo', $holding->photo ?? '') }}">
+        <label class="form-label">Foto</label>
+        <input type="file" name="photo" class="form-control" accept="image/*" onchange="previewHolding(this)">
+        <div class="mt-2">
+            <img id="holding-preview" src="{{ !empty($holding?->photo) ? asset('storage/'.$holding->photo) : asset('storage/semfoto.png') }}" alt="Pré-visualização" class="img-thumbnail" style="max-height: 120px;">
+        </div>
+        @if(!empty($holding?->photo))
+            <small class="text-muted d-block mt-1">Atual: <a href="{{ asset('storage/'.$holding->photo) }}" target="_blank">ver imagem</a></small>
+        @endif
     </div>
 </div>
 
@@ -43,3 +49,15 @@
     </ul>
 </div>
 @endif
+
+@push('scripts')
+<script>
+    function previewHolding(input) {
+        const preview = document.getElementById('holding-preview');
+        if (!preview || !input.files || !input.files[0]) return;
+        const reader = new FileReader();
+        reader.onload = e => preview.src = e.target.result;
+        reader.readAsDataURL(input.files[0]);
+    }
+</script>
+@endpush

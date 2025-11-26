@@ -14,20 +14,28 @@
     @forelse($products as $product)
     <div class="col-md-4 mb-4">
         <div class="card h-100 shadow-sm">
-            <img src="{{ $product->image ? asset('storage/'.$product->image) : 'https://via.placeholder.com/400x300' }}" class="card-img-top" alt="{{ $product->name }}">
+            @php
+                $productImage = $product->image ? asset('storage/'.$product->image) : asset('storage/semfoto.png');
+            @endphp
+            <img src="{{ $productImage }}" class="card-img-top" alt="{{ $product->name }}">
             <div class="card-body">
-                <h5 class="card-title">{{ $product->name }}</h5>
-                <p class="card-text text-muted mb-1">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title mb-0">{{ $product->name }}</h5>
+                    @if($product->category)
+                        <span class="badge bg-light text-dark border">{{ $product->category->name }}</span>
+                    @endif
+                </div>
+                <p class="card-text text-muted mb-2">
                     {{ \Illuminate\Support\Str::limit($product->description, 120) }}
                 </p>
-                <p class="mb-1 fw-bold text-primary">R$ {{ number_format($product->price, 2, ',', '.') }}</p>
-                @if($product->category)
-                    <span class="badge bg-light text-dark border">{{ $product->category->name }}</span>
-                @endif
+                <p class="mb-0 fw-bold text-primary">R$ {{ number_format($product->price, 2, ',', '.') }}</p>
             </div>
             <div class="card-footer bg-white d-flex justify-content-between align-items-center">
                 <a href="{{ route('products.show', $product) }}" class="btn btn-sm btn-outline-primary">Ver detalhes</a>
-                <span class="text-muted small">#{{ $product->id }}</span>
+                <form action="{{ route('cart.addProduct', $product) }}" method="POST" class="d-inline">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-success">Comprar</button>
+                </form>
             </div>
         </div>
     </div>

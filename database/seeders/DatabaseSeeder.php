@@ -9,6 +9,8 @@ use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -28,21 +30,132 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('test'),
         ]);
 
-        $categories = Category::factory(5)->create();
+        $categories = collect([
+            ['name' => 'Residencial', 'description' => 'Casas e apartamentos'],
+            ['name' => 'Comercial', 'description' => 'Lojas e salas comerciais'],
+            ['name' => 'Tecnologia', 'description' => 'Eletrônicos e acessórios'],
+            ['name' => 'Móveis', 'description' => 'Cadeiras, mesas e decoração'],
+            ['name' => 'Mercado', 'description' => 'Itens de consumo e mantimentos'],
+        ])->map(fn ($data) => Category::create([
+            'name'        => $data['name'],
+            'description' => $data['description'],
+            'slug'        => Str::slug($data['name']),
+        ]));
 
-        Holding::factory(10)
-            ->make()
-            ->each(function ($holding) use ($categories) {
-                $holding->category_id = $categories->random()->id;
-                $holding->save();
-            });
+        $holdingsData = [
+            [
+                'name'        => 'Apartamento Bela Vista',
+                'address'     => 'Rua das Flores, 120 - São Paulo, SP',
+                'description' => '2 dormitórios, 1 vaga, 65m², reformado e pronto para morar.',
+                'owner'       => 'Construtora Alpha',
+                'price'       => 520000,
+                'photo'       => '1.png',
+            ],
+            [
+                'name'        => 'Casa Jardim das Acácias',
+                'address'     => 'Alameda Ipê Amarelo, 450 - Campinas, SP',
+                'description' => 'Sobrado 3 suítes, área gourmet e piscina aquecida.',
+                'owner'       => 'Maria Ferreira',
+                'price'       => 1190000,
+                'photo'       => '2.jpg',
+            ],
+            [
+                'name'        => 'Sala Comercial Centro Empresarial',
+                'address'     => 'Av. Paulista, 2000 - São Paulo, SP',
+                'description' => '42m², 1 vaga, pronta para uso, próximo ao metrô.',
+                'owner'       => 'Faria Lima Offices',
+                'price'       => 430000,
+                'photo'       => '3.jpg',
+            ],
+            [
+                'name'        => 'Terreno Vista Verde',
+                'address'     => 'Estrada do Sol, km 12 - Sorocaba, SP',
+                'description' => 'Lote 360m² em condomínio fechado com lazer completo.',
+                'owner'       => 'Incorp ABC',
+                'price'       => 310000,
+            ],
+            [
+                'name'        => 'Studio Smart Home',
+                'address'     => 'Rua Oscar Freire, 815 - São Paulo, SP',
+                'description' => 'Studio 32m² mobiliado, automação e varanda.',
+                'owner'       => 'Invest SA',
+                'price'       => 389000,
+            ],
+        ];
 
-        $products = Product::factory(15)
-            ->make()
-            ->each(function ($product) use ($categories) {
-                $product->category_id = $categories->random()->id;
-                $product->save();
-            });
+        $holdings = collect($holdingsData)->map(function ($data) use ($categories) {
+            return Holding::create([
+                'name'        => $data['name'],
+                'address'     => $data['address'],
+                'description' => $data['description'],
+                'owner'       => $data['owner'],
+                'price'       => $data['price'],
+                'regisdate'   => Carbon::now()->subDays(rand(10, 120)),
+                'photo'       => '', // imagem será adicionada depois
+                'category_id' => $categories->where('name', str_contains($data['name'], 'Comercial') ? 'Comercial' : 'Residencial')->first()->id,
+            ]);
+        });
+
+        $productsData = [
+            [
+                'name'        => 'Notebook Dell Inspiron 15',
+                'description' => 'Intel i5 12ª geração, 8GB RAM, SSD 512GB, Windows 11.',
+                'price'       => 4599.90,
+                'category'    => 'Tecnologia',
+            ],
+            [
+                'name'        => 'Cadeira Gamer ErgoPro',
+                'description' => 'Estrutura reforçada, apoio lombar e reclínio 180°.',
+                'price'       => 899.00,
+                'category'    => 'Móveis',
+            ],
+            [
+                'name'        => 'Geladeira Frost Free 400L',
+                'description' => 'Inox, controle eletrônico, modo turbo para festas.',
+                'price'       => 3299.00,
+                'category'    => 'Mercado',
+            ],
+            [
+                'name'        => 'Smartphone Galaxy S23',
+                'description' => 'Tela 6.1" AMOLED, 128GB, câmera tripla com estabilização.',
+                'price'       => 3899.00,
+                'category'    => 'Tecnologia',
+            ],
+            [
+                'name'        => 'Mesa de Jantar 6 Lugares',
+                'description' => 'Tampo de vidro temperado e base de madeira maciça.',
+                'price'       => 1490.00,
+                'category'    => 'Móveis',
+            ],
+            [
+                'name'        => 'Kit Café Especial',
+                'description' => '3 pacotes de 250g de grãos selecionados torrados na semana.',
+                'price'       => 129.90,
+                'category'    => 'Mercado',
+            ],
+            [
+                'name'        => 'Monitor 27" IPS 144Hz',
+                'description' => 'Quad HD, 1ms, compatível com G-Sync/FreeSync.',
+                'price'       => 1799.00,
+                'category'    => 'Tecnologia',
+            ],
+            [
+                'name'        => 'Sofá Retrátil 3 Lugares',
+                'description' => 'Tecido suede, 2,30m, assentos com espuma D33.',
+                'price'       => 2490.00,
+                'category'    => 'Móveis',
+            ],
+        ];
+
+        $products = collect($productsData)->map(function ($data) use ($categories) {
+            return Product::create([
+                'name'        => $data['name'],
+                'description' => $data['description'],
+                'price'       => $data['price'],
+                'image'       => '', // imagem será adicionada depois
+                'category_id' => $categories->where('name', $data['category'])->first()->id,
+            ]);
+        });
 
         $order = Order::create([
             'user_id' => $customer->id,

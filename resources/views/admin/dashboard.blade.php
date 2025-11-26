@@ -40,10 +40,16 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0">Ultimos pedidos</h4>
-    <a href="{{ route('admin.holdings.index') }}" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2">
-        <i class="fa-solid fa-box"></i>
-        <span>Gerenciar imoveis</span>
-    </a>
+    <div class="d-flex gap-2">
+        <a href="{{ route('admin.holdings.index') }}" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2">
+            <i class="fa-solid fa-building"></i>
+            <span>Gerenciar imoveis</span>
+        </a>
+        <a href="{{ route('admin.products.index') }}" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2">
+            <i class="fa-solid fa-box"></i>
+            <span>Gerenciar produtos</span>
+        </a>
+    </div>
 </div>
 @if(($latestOrders ?? collect())->count())
 <table class="table table-striped">

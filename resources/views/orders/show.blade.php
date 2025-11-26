@@ -14,15 +14,21 @@
 <table class="table table-sm">
     <thead>
         <tr>
-            <th>Imovel</th>
-            <th>Preco (R$)</th>
+            <th>Item</th>
+            <th>Tipo</th>
+            <th>Quantidade</th>
+            <th>Preço unitário (R$)</th>
+            <th>Subtotal (R$)</th>
         </tr>
     </thead>
     <tbody>
         @foreach($order->items as $item)
         <tr>
-            <td>{{ $item->holding->name ?? 'Imovel removido' }}</td>
-            <td>{{ number_format($item->price, 2, ',', '.') }}</td>
+            <td>{{ $item->product->name ?? $item->holding->name ?? 'Item removido' }}</td>
+            <td class="text-capitalize">{{ $item->product_id ? 'produto' : 'imóvel' }}</td>
+            <td>{{ $item->quantity }}</td>
+            <td>{{ number_format($item->unit_price, 2, ',', '.') }}</td>
+            <td>{{ number_format($item->unit_price * $item->quantity, 2, ',', '.') }}</td>
         </tr>
         @endforeach
     </tbody>
