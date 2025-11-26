@@ -3,7 +3,7 @@
 @section('content')
 <div class="row mb-4">
     <div class="col-12">
-        <h1>Nossos Imóveis</h1>
+        <h1>Nossos imoveis</h1>
     </div>
 </div>
 
@@ -14,15 +14,15 @@
             <img src="{{ $holding->photo ? asset('storage/'.$holding->photo) : 'https://via.placeholder.com/400x300' }}" class="card-img-top" alt="{{ $holding->name }}">
             <div class="card-body">
                 <h5 class="card-title">{{ $holding->name }}</h5>
-                <p class="card-text">{{ Str::limit($holding->description, 100) }}</p>
-                <p class="mb-1"><strong>Endereço:</strong> {{ $holding->address }}</p>
-                <p class="mb-1"><strong>Proprietário:</strong> {{ $holding->owner }}</p>
+                <p class="card-text">{{ \Illuminate\Support\Str::limit($holding->description, 100) }}</p>
+                <p class="mb-1"><strong>Endereco:</strong> {{ $holding->address }}</p>
+                <p class="mb-1"><strong>Proprietario:</strong> {{ $holding->owner }}</p>
             </div>
             <div class="card-footer bg-white">
-                <a href="{{ route('holdings.show', $holding) }}" class="btn btn-primary">Ver Detalhes</a>
+                <a href="{{ route('holdings.show', $holding) }}" class="btn btn-primary">Ver detalhes</a>
                 <form action="{{ route('cart.add', $holding) }}" method="POST" class="d-inline">
                     @csrf
-                    <button type="submit" class="btn btn-success">Adicionar ao Carrinho</button>
+                    <button type="submit" class="btn btn-success">Adicionar ao carrinho</button>
                 </form>
             </div>
         </div>

@@ -18,9 +18,9 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Imóvel</th>
-                            <th>Endereço</th>
-                            <th>Proprietário</th>
+                            <th>Imovel</th>
+                            <th>Endereco</th>
+                            <th>Proprietario</th>
                             <th>Quantidade</th>
                         </tr>
                     </thead>
@@ -28,11 +28,11 @@
                         @foreach($cartItems as $item)
                         <tr>
                             <td>
-                                <img src="{{ $item['photo'] ?? 'https://via.placeholder.com/50' }}" width="50" class="me-2" alt="Foto do imóvel">
-                                {{ $item['name'] ?? 'Imóvel' }}
+                                <img src="{{ $item['photo'] ?? 'https://via.placeholder.com/50' }}" width="50" class="me-2" alt="Foto do imovel">
+                                {{ $item['name'] ?? 'Imovel' }}
                             </td>
-                            <td>{{ $item['address'] ?? '—' }}</td>
-                            <td>{{ $item['owner'] ?? '—' }}</td>
+                            <td>{{ $item['address'] ?? '-' }}</td>
+                            <td>{{ $item['owner'] ?? '-' }}</td>
                             <td>{{ $item['quantity'] ?? 1 }}</td>
                         </tr>
                         @endforeach
@@ -40,7 +40,7 @@
                     <tfoot>
                         <tr>
                             <td colspan="3" class="text-end"><strong>Total estimado:</strong></td>
-                            <td>R$ {{ number_format($total, 2, ',', '.') }} (sem preço cadastrado)</td>
+                            <td>R$ {{ number_format($total, 2, ',', '.') }} (sem preco cadastrado)</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -55,7 +55,7 @@
             <div class="card-body">
                 <form action="{{ route('checkout.store') }}" method="POST">
                     @csrf
-                    <p class="mb-3">Sem cobrança: imóveis não possuem preço cadastrado.</p>
+                    <p class="mb-3">Sem cobranca: imoveis nao possuem preco cadastrado.</p>
                     <button type="submit" class="btn btn-primary w-100">Finalizar pedido</button>
                 </form>
             </div>
@@ -66,7 +66,7 @@
 <div class="row">
     <div class="col-12">
         <div class="alert alert-info">
-            Seu carrinho está vazio. <a href="{{ route('holdings.index') }}">Veja os imóveis</a>.
+            Seu carrinho esta vazio. <a href="{{ route('holdings.index') }}">Veja os imoveis</a>.
         </div>
     </div>
 </div>

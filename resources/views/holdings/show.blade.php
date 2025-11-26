@@ -4,8 +4,8 @@
 <div class="row">
     <img src="{{ $holding->photo ? asset('storage/'.$holding->photo) : 'https://via.placeholder.com/400x300' }}" class="img-fluid" alt="{{ $holding->name }}">
     <h1>{{ $holding->name }}</h1>
-    <p class="mb-1"><strong>Endereço:</strong> {{ $holding->address }}</p>
-    <p class="mb-1"><strong>Proprietário:</strong> {{ $holding->owner }}</p>
+    <p class="mb-1"><strong>Endereco:</strong> {{ $holding->address }}</p>
+    <p class="mb-1"><strong>Proprietario:</strong> {{ $holding->owner }}</p>
     <p class="mb-3">{{ $holding->description }}</p>
     @if($holding->category)
         <p>Categoria: {{ $holding->category->name }}</p>

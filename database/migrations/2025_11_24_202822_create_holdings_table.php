@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('description', 50);
             $table->string('owner', 50);
             $table->dateTime('regisdate');
-            $table->string('photo', 30);
+            $table->string('photo', 255);
             $table->timestamps();
         });
         

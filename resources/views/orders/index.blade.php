@@ -17,7 +17,7 @@
                     <th>Data</th>
                     <th>Total (R$)</th>
                     <th>Status</th>
-                    <th>Ações</th>
+                    <th>Acoes</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,7 +41,7 @@
         {{ $orders->links() }}
         @else
         <div class="alert alert-info">
-            Você ainda não fez pedidos. <a href="{{ route('holdings.index') }}">Veja os imóveis</a>.
+            Voce ainda nao fez pedidos. <a href="{{ route('holdings.index') }}">Veja os imoveis</a>.
         </div>
         @endif
     </div>

@@ -1,0 +1,35 @@
+@extends('layouts.app')
+
+@section('content')
+<h1 class="mb-3">Pedido #{{ $order->id }}</h1>
+
+<div class="mb-3">
+    <p><strong>Total:</strong> R$ {{ number_format($order->total, 2, ',', '.') }}</p>
+    <p><strong>Status:</strong> {{ ucfirst($order->status) }}</p>
+    <p><strong>Data:</strong> {{ $order->created_at->format('d/m/Y H:i') }}</p>
+</div>
+
+<h4>Itens</h4>
+@if($order->items->count())
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th>Imovel</th>
+            <th>Preco (R$)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($order->items as $item)
+        <tr>
+            <td>{{ $item->holding->name ?? 'Imovel removido' }}</td>
+            <td>{{ number_format($item->price, 2, ',', '.') }}</td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
+@else
+<div class="alert alert-info">Nenhum item neste pedido.</div>
+@endif
+
+<a href="{{ route('orders.index') }}" class="btn btn-light mt-3">Voltar</a>
+@endsection
