@@ -81,7 +81,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Studio 32m² mobiliado, automação e varanda.',
                 'owner'       => 'Invest SA',
                 'price'       => 389000,
-                'photo'       => '5.png',
+                'photo'       => '5.jpg',
             ],
         ];
 
